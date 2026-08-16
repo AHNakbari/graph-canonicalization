@@ -80,10 +80,21 @@ document-local.** All 120 involve a name that also occurs in other events. The
 sampler chose same-event pairs; that is a property of the sampling, not evidence
 that cross-document identity was rejected.
 
-The 5 different-name `MERGE` pairs are all `LegalEntity`. Only one is explained
-by an alias chain inside the event; the other four have no supporting evidence
-anywhere in the fictionalized data. They are an accepted recall ceiling of about
-4/120.
+### The 5 different-name `MERGE` pairs
+
+These are the only labels the shipped policy gets wrong, so they are worth
+naming exactly. All 5 are `LegalEntity` to `LegalEntity`, same source event,
+different chunk, different names. The 5 label rows cover only **4 distinct
+entity pairs**: one pair appears twice with left and right swapped.
+
+Of those 4, exactly **1** is joined by a direct alias assertion
+(`organization-030b4b9bb794` lists `organization-78e4815053e1` as an alias). The
+other 3 have empty alias lists on both sides, so nothing in the visible data
+connects them at all. 2 of the 4 do still surface in `possible_duplicates.jsonl`
+as alias group rows; the other 2 are invisible to the submission entirely.
+
+That is an accepted merge-recall ceiling of 5/120. §4 measures the narrowest
+rule that could close part of it, and shows it costs more than it recovers.
 
 ## 4. The alias experiment
 
@@ -97,11 +108,20 @@ event, varying only the alias rule:
 | Honoured | 60,981 | 0.9615 | 0.9015 | 0.9917 |
 | Honoured if ≥2 documents assert it | 63,042 | 0.9779 | 0.9444 | 0.9917 |
 | Honoured if ≥5 documents assert it | 64,227 | 0.9806 | 0.9593 | 0.9833 |
+| Honoured only inside one source event | 63,911 | 0.9806 | 0.9593 | 0.9833 |
 
 The required hidden hard-merge precision is **0.97**. Every alias-honouring
 variant sits below it, and the recall it buys is four pairs. Aliases are
 therefore recorded in `possible_duplicates.jsonl` and never merged. Reproduce
-with `--merge-on-alias`.
+the first four rows with `--merge-on-alias`.
+
+The last row is the interesting one, because it is the narrowest alias rule that
+exists: merge two names only when one asserts the other as an alias **and both
+occurrences sit in the same document**. It is the rule that would recover the
+single alias-linked pair from §3, and it is the closest thing to free evidence
+in this dataset. Measured over the whole corpus it applies 5,572 merges: it
+gains 3 true merges and creates 5 false ones, taking merge precision to 0.9593.
+Even confined to one document, alias evidence costs more than it recovers.
 
 ## 5. Confirming the resulting graph
 

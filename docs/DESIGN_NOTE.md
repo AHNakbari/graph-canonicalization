@@ -48,8 +48,8 @@ One trap is worth naming. An entity row has `org_id` but no `workspace_id`. The
 workspace is only reachable by joining `source_event_id` against
 `source_ledger.jsonl`. A loader that trusts the entity row alone loses one of the
 three isolation boundaries and never notices, because this dataset has only one
-workspace. So the loader does the join, checks the declared organization against
-the ledger, and stops the run if they disagree.
+workspace. So the loader does the join, cross checks the organization, and stops
+the run if they disagree.
 
 **Discounted.** Extraction confidence. It sets edge confidence and appears in
 diagnostics, but nothing is ever dropped for being low confidence. The
@@ -70,18 +70,37 @@ empty on all 479,930 rows, and string similarity, for the reason in §1.
 
 These two mistakes are not equal, and the thresholds say so: hard merge
 precision must reach 0.97, while overall macro F1 only needs 0.78. The real
-reason is worse than the scoring. A false merge is silent and it spreads: joining two entities also joins every edge on them, so the graph gains
-facts nobody stated, and nothing downstream can see it, because the provenance
-looks perfect. It just points at two different real things. A missed merge is
+reason is worse than the scoring. A false merge is silent and it spreads:
+joining two entities also joins every edge on them, so the graph gains facts
+nobody stated, and nothing downstream can see it, because the provenance looks
+perfect. It just points at two different real things. A missed merge is
 visible and fixable: both entities stay, both are correct, and the open question
 is written down for a later pass or a person to settle.
 
 So the design leans hard towards missed merges and pays for it in
 `possible_duplicates.jsonl`. Merge precision is 1.0000 and merge recall is
-0.9583. The five missed merges are pairs with different names in one document,
-whose only link lived in text the fictionalization removed. Four cannot be
-recovered at any threshold. I would rather report that ceiling than close it
-with a rule I cannot justify.
+0.9583.
+
+**The five it gets wrong, and how to fix them.** These are the only labels the
+policy misses, so I looked at each one. All five are `LegalEntity` pairs inside
+one document with different names, and the five rows cover only four distinct
+pairs, because one is listed twice with the sides swapped. One of the four is
+joined by a direct alias assertion. The other three have empty alias lists on
+both sides, so nothing visible connects them.
+
+The obvious fix fails, and I measured it rather than assuming. Merging on
+aliases only when both occurrences sit in the same document is the narrowest
+rule that could catch the first pair. It gains three true merges and creates
+five false ones, dropping merge precision to 0.9593, under the 0.97 floor
+([FINDINGS.md](FINDINGS.md) §4).
+
+So the fix is not a better rule here. It is better evidence one stage earlier.
+The extractor read the phrase that links the two names, the "hereinafter" or
+"trading as" clause, and then dropped it, leaving a bare alias list to guess
+from. It should emit that link as a typed fact with the span it came from. Then
+this stage merges on stated evidence instead of inferring, and precision costs
+nothing. Until then two of the four pairs at least surface as open questions,
+and two are invisible. That is the honest cost of the policy.
 
 ## 4. How uncertainty is represented
 
@@ -93,8 +112,8 @@ from the assignment row itself, not only from another file.
 pairs of bare given names, plus 5,705 group rows for aliases. They are pairwise
 because that is how the question is really asked, and because the supplied
 scorer only reads rows with exactly two evidence IDs, so a group row answers
-nothing at all. This is what makes the file 2.21 GB. The cost and the alternatives are
-in [submission/README.md](../submission/README.md).
+nothing at all. This is what makes the file 2.21 GB. The cost and the
+alternatives are in [submission/README.md](../submission/README.md).
 
 **As a number.** Pair confidence falls as a name gets more common:
 `1 / (1 + log2(documents carrying the name))`. A name in two documents gets 0.50,
@@ -129,8 +148,8 @@ Three layers sit on top:
   Without this, the fast checker would just be a claim.
 * **Reading the shape.** The report lists the twenty largest components. The
   biggest has 22,486 members and is the client organization of the corpus, which
-  is correct. If the biggest were ever a Person appearing in every document, that
-  would be an alarm even with all invariants green.
+  is correct. If it were ever a Person appearing in every document, that would be
+  an alarm even with all invariants green.
 
 **Is the graph right?** This cannot be answered here, and I want to be clear
 about it. Passing every invariant proves the graph is consistent. It does not
@@ -229,10 +248,9 @@ seconds. Nothing hides inside a model. For a graph that legal work depends on,
 that is worth more than a few points of recall.
 
 **It can grow one step at a time.** Each future rule can be added alone and
-measured against this exact baseline, with the configuration fingerprint
-recording which policy produced which artifacts. That is a real path into
-production. Starting from a large model and then trying to explain its mistakes
-is not.
+measured against this baseline, with the configuration fingerprint recording
+which policy produced which artifacts. That is a real path into production.
+Starting from a large model and then explaining its mistakes is not.
 
 The honest caveat: simple worked here partly because the fictionalization
 removed the very signals a smarter method would use. On real text it would not be
@@ -249,8 +267,8 @@ accurate and quick to validate with that tool as written. The measurement is in
 The submission optimizes for accuracy and makes validity cheap to confirm
 another way: full enumeration ships, `graphcanon verify` runs the identical
 assertions in under a minute with 17 differential tests proving it agrees, the
-one line fix is handed over, and `possible_duplicate_pair_budget` exists for anyone
-who must run the tool unpatched. I would rather report a defect in the harness,
+one line fix is handed over, and `possible_duplicate_pair_budget` exists for
+anyone who must run it unpatched. I would rather report a defect in the harness,
 measure it, and hand over the fix than quietly ship a weaker graph to work
 around it.
 
