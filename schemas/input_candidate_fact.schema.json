@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["candidate_fact_id", "chunk_id", "confidence", "fact_text", "law_edge_attributes", "org_id", "predicate", "source_event_id", "subject_candidate_id"],
+  "properties": {
+    "candidate_fact_id": {"type": "string", "pattern": "^cfact_"},
+    "chunk_id": {"type": "string", "pattern": "^chunk_"},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "fact_text": {"type": "string"},
+    "law_edge_attributes": {"type": "object"},
+    "object_candidate_id": {"type": ["string", "null"]},
+    "object_value": {},
+    "observed_at": {"type": ["string", "null"]},
+    "org_id": {"type": "string", "pattern": "^org_"},
+    "predicate": {"type": "string"},
+    "source_event_id": {"type": "string", "pattern": "^event_"},
+    "subject_candidate_id": {"type": "string", "pattern": "^cent_"},
+    "valid_at_candidate": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}

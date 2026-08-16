@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["source_event_id", "org_id", "workspace_id", "source_system", "source_ref", "schema_version"],
+  "properties": {
+    "source_event_id": {"type": "string", "pattern": "^event_"},
+    "org_id": {"type": "string", "pattern": "^org_"},
+    "workspace_id": {"type": "string", "pattern": "^ws_"},
+    "source_system": {"type": "string"},
+    "source_ref": {"type": "string"},
+    "schema_version": {"type": "string"}
+  },
+  "additionalProperties": true
+}

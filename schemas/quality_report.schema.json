@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quality report",
+  "type": "object",
+  "required": ["input_counts", "output_counts", "coverage", "safety", "components", "runtime", "configuration_fingerprint"],
+  "properties": {
+    "input_counts": {"type": "object"},
+    "output_counts": {"type": "object"},
+    "coverage": {"type": "object"},
+    "safety": {"type": "object"},
+    "components": {"type": "object"},
+    "runtime": {"type": "object"},
+    "llm_usage": {"type": "object"},
+    "configuration_fingerprint": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

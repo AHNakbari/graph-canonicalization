@@ -1,0 +1,4 @@
+# Test dependencies only; the pipeline itself has none. Pinned exactly, and
+# tests/test_no_external_dependencies.py asserts the pins stay exact.
+pytest==8.3.4
+jsonschema==4.23.0

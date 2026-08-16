@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fact assignment",
+  "type": "object",
+  "required": ["candidate_fact_id", "disposition", "reason_codes"],
+  "properties": {
+    "candidate_fact_id": {"type": "string", "pattern": "^cfact_"},
+    "disposition": {"enum": ["PROJECTED", "DROPPED_INVALID"]},
+    "canonical_edge_id": {"type": ["string", "null"]},
+    "reason_codes": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+  },
+  "additionalProperties": true
+}

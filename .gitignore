@@ -1,0 +1,27 @@
+# Handout data is large and confidential - never committed.
+/data/
+
+# Full-run artifacts are reproduced by `make run`; hashes are recorded in docs/RUN_MANIFEST.md.
+/submission/output/*
+!/submission/output/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

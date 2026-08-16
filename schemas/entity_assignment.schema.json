@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Entity assignment",
+  "type": "object",
+  "required": ["candidate_entity_id", "canonical_entity_id", "decision", "confidence", "reason_codes"],
+  "properties": {
+    "candidate_entity_id": {"type": "string", "pattern": "^cent_"},
+    "canonical_entity_id": {"type": "string", "minLength": 1},
+    "decision": {"enum": ["NEW_CANONICAL", "MERGED", "POSSIBLE_DUPLICATE"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "reason_codes": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "evidence_candidate_entity_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphcanon"
+version = "1.0.0"
+description = "Identity resolution and graph canonicalization for extracted entity occurrences"
+readme = "README.md"
+requires-python = ">=3.11"
+
+# Deliberately empty, and tests/test_no_external_dependencies.py enforces it.
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "jsonschema==4.23.0",
+]
+
+[project.scripts]
+graphcanon = "graphcanon.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: full-dataset tests; deselect with -m 'not slow'",
+]

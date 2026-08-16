@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical entity",
+  "type": "object",
+  "required": ["canonical_entity_id", "canonical_name", "entity_type", "org_id", "workspace_id", "member_candidate_entity_ids", "source_event_ids", "chunk_ids"],
+  "properties": {
+    "canonical_entity_id": {"type": "string", "minLength": 1},
+    "canonical_name": {"type": "string", "minLength": 1},
+    "entity_type": {"type": "string", "minLength": 1},
+    "org_id": {"type": "string", "pattern": "^org_"},
+    "workspace_id": {"type": "string", "pattern": "^ws_"},
+    "aliases": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "member_candidate_entity_ids": {"type": "array", "items": {"type": "string", "pattern": "^cent_"}, "minItems": 1, "uniqueItems": true},
+    "source_event_ids": {"type": "array", "items": {"type": "string", "pattern": "^event_"}, "minItems": 1, "uniqueItems": true},
+    "chunk_ids": {"type": "array", "items": {"type": "string", "pattern": "^chunk_"}, "minItems": 1, "uniqueItems": true},
+    "component_quality": {"type": "object"}
+  },
+  "additionalProperties": true
+}

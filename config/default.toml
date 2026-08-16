@@ -1,0 +1,36 @@
+# Default resolution policy.
+#
+# Every value under [resolution] feeds the configuration fingerprint reported in
+# quality_report.json. Changing one changes the fingerprint, so a reviewer can
+# always tell which policy produced a given set of artifacts.
+
+[resolution]
+# How far a single-token Person name is trusted. "source_event" confines it to
+# the document that produced it; "global" merges by name everywhere and is
+# rejected by tools/validate_submission.py without corroborating evidence.
+one_token_person_scope = "source_event"
+
+# Alias assertions are recorded as unresolved pairs, not acted on.
+# Measured on the 360 public pairs:
+#   off -> macro-F1 0.9861, merge precision 1.0000
+#   on  -> macro-F1 0.9615, merge precision 0.9015  (below the 0.97 floor)
+merge_on_alias = false
+alias_min_support = 2
+
+# Cap on pairwise POSSIBLE_DUPLICATE rows. Omitted/null means enumerate every
+# unresolved pair (~8.1M rows, ~1.9 GB on the full dataset). Anything a cap
+# skips is still emitted once as a group-level ambiguity.
+# possible_duplicate_pair_budget = 2000000
+
+# Facts whose endpoints canonicalize to the same entity are rejected with a
+# reason rather than emitted as self-loops.
+drop_self_loops = true
+
+# Nothing is discarded by confidence; these exist for sensitivity analysis only.
+min_occurrence_confidence = 0.0
+min_fact_confidence = 0.0
+
+[runtime]
+input_dir = "data/input"
+output_dir = "submission/output"
+progress_every = 100000

@@ -1,0 +1,9 @@
+.git/
+data/
+submission/output/
+**/__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+docs/

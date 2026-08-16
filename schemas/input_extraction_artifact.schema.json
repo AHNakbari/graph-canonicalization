@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["source_event_id", "org_id", "workspace_id", "chunks", "metadata", "text_hash", "text_length"],
+  "properties": {
+    "source_event_id": {"type": "string", "pattern": "^event_"},
+    "org_id": {"type": "string", "pattern": "^org_"},
+    "workspace_id": {"type": "string", "pattern": "^ws_"},
+    "metadata": {"type": "object"},
+    "text_hash": {"type": "string", "pattern": "^hash_"},
+    "text_length": {"type": "integer", "minimum": 0},
+    "chunks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["chunk_id", "source_event_id", "index", "start", "end", "text"],
+        "properties": {
+          "chunk_id": {"type": "string", "pattern": "^chunk_"},
+          "source_event_id": {"type": "string", "pattern": "^event_"},
+          "index": {"type": "integer", "minimum": 0},
+          "start": {"type": "integer", "minimum": 0},
+          "end": {"type": "integer", "minimum": 0},
+          "text": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
